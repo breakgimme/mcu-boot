@@ -1,0 +1,26 @@
+#!/bin/sh
+# run xorg and escalator (their way of letting the unprivileged user execute tasks that need root permissions)
+Xorg -retro &
+escalator &
+# setup cgroups for chromium
+mount -t tmpfs none /sys/fs/cgroup
+mkdir /sys/fs/cgroup/memory
+mkdir /sys/fs/cgroup/net_cls
+mount -t cgroup -o memory none /sys/fs/cgroup/memory
+mount -t cgroup -o net_cls none /sys/fs/cgroup/net_cls
+cgcreate -g "net_cls:/internet"
+cgcreate -g "net_cls:/nonet"
+cgcreate -g "net_cls:/qtcar"
+cgset -r "net_cls.classid=0x10007" "/internet"
+cgcreate -g "memory:/cef"
+# give the unprivileged user access to input stuff
+chmod 777 /dev/input/event0
+chmod 777 /dev/uinput
+# get /dev/shm working for chromium
+mkdir /dev/shm
+mount -t tmpfs none /dev/shm
+# launch the ui!!
+# this is ran two times because for whatever reason it crashes if its ran for the first time on a given fs
+# it should be debugged but this whole thing should be done from scratch so whatever
+su tesla -s /bin/sh -c "LD_PRELOAD=/itspowered.so /startup cid"
+su tesla -s /bin/sh -c "LD_PRELOAD=/itspowered.so /startup cid"

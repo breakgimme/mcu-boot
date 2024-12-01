@@ -1,0 +1,28 @@
+#!/bin/toybox sh
+# install toybox
+for i in $(/bin/toybox); do /bin/toybox ln -s toybox /bin/$i; done
+export PATH="/bin:/usr/bin"
+
+# mount the usual
+mount -t proc none /proc
+mount -t sysfs none /sys
+mount -t devtmpfs none /dev
+mount -t tmpfs none /tmp
+
+# mount the tesla image
+mount -t squashfs /dev/sda /squash
+
+# setup overlayfs to have a read-write filesystem without modifying the original os image
+mkdir /tmp/upper
+mkdir /tmp/work
+mount -t overlay overlay -o lowerdir=/squash,upperdir=/tmp/upper,workdir=/tmp/work /overlay
+
+# remove xorg configs that were preventing the display from being detected
+rm /overlay/etc/X11/xorg.conf.d/*
+
+# copy everything from stuff to /overlay
+cp -r /stuff/* /overlay
+
+# boot!!!
+exec switch_root /overlay /initscript
+
