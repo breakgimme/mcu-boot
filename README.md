@@ -1,3 +1,7 @@
+> [!WARNING]
+> if you want to replicate what i did, please don't make the same mistake as me and try to launch everything by yourself\
+> the runqtcar script is actually your friend\
+> here's an example of someone doing this more properly than i did: https://fn.lc/post/tesla-model-3-modes/
 # mcu-boot
 a very low quality collection of software and scripts that can be used to virtualize one specific version of the tesla car software (2019.20.4.2.model3)\
 it's very much a prototype, do not expect stuff to work or be properly done (i never wanted to make it public in this state, but i'd rather do it myself than have someone else do it for me)
